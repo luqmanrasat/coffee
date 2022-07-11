@@ -1,32 +1,38 @@
-import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Inject, Module } from '@nestjs/common';
+import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config';
+import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CoffeesModule } from './coffees/coffees.module';
-import appConfig from './config/app.config';
-import { configValidationSchema } from './config/config.schema';
+import { configValidationSchema } from './config.schema';
+import dbConfig from './config/db.config';
+import envConfig from './config/env.config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      envFilePath: ['.env'],
       validationSchema: configValidationSchema,
-      load: [appConfig],
+      load: [envConfig, dbConfig],
     }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
-      useFactory: async (configService: ConfigService) => ({
-        type: 'postgres',
-        host: configService.get('database.host'),
-        port: configService.get('database.port'),
-        username: configService.get('database.username'),
-        password: configService.get('database.password'),
-        database: configService.get('database.name'),
-        autoLoadEntities: true,
-        synchronize: true,
-      }),
+      useFactory: (
+        configService: ConfigService,
+      ) => {
+        const databaseConfig: ConfigType<typeof dbConfig> =
+          configService.get('database');
+        return {
+          type: 'postgres',
+          host: databaseConfig.host,
+          port: databaseConfig.port,
+          username: databaseConfig.username,
+          password: databaseConfig.password,
+          database: databaseConfig.name,
+          autoLoadEntities: true,
+          synchronize: true,
+        };
+      },
     }),
     CoffeesModule,
   ],
