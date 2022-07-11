@@ -2,6 +2,7 @@ import * as Joi from 'joi';
 
 export const configValidationSchema = Joi.object({
   NODE_ENV: Joi.valid('development', 'production').default('development'),
+  API_KEY: Joi.string().optional(),
   DATABASE_HOST: Joi.string().default('localhost'),
   DATABASE_PORT: Joi.number().default(5432),
   DATABASE_USERNAME: Joi.string().required(),
