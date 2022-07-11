@@ -1,4 +1,4 @@
-import { Inject, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService, ConfigType } from '@nestjs/config';
 import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
@@ -20,8 +20,8 @@ import envConfig from './config/env.config';
       useFactory: (
         configService: ConfigService,
       ) => {
-        const databaseConfig: ConfigType<typeof dbConfig> =
-          configService.get('database');
+        const databaseConfig =
+          configService.get<ConfigType<typeof dbConfig>>('database');
         return {
           type: 'postgres',
           host: databaseConfig.host,
