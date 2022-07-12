@@ -1,11 +1,12 @@
-import { Module, ValidationPipe } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import envConfig from 'src/config/env.config';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { ApiKeyGuard } from './guards/api-key.guard';
 import { TimeoutInterceptor } from './interceptors/timeout.interceptor';
 import { WrapResponseInterceptor } from './interceptors/wrap-response.interceptor';
+import { LoggingMiddleware } from './middleware/logging.middleware';
 
 @Module({
   imports: [ConfigModule.forFeature(envConfig)],
@@ -16,4 +17,8 @@ import { WrapResponseInterceptor } from './interceptors/wrap-response.intercepto
     { provide: APP_INTERCEPTOR, useClass: TimeoutInterceptor },
   ],
 })
-export class CommonModule {}
+export class CommonModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(LoggingMiddleware).forRoutes('*');
+  }
+}
