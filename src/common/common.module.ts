@@ -1,7 +1,7 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
-import envConfig from 'src/config/env.config';
+import envConfig from '../config/env.config';
 import { HttpExceptionFilter } from './filters/http-exception.filter';
 import { ApiKeyGuard } from './guards/api-key.guard';
 import { TimeoutInterceptor } from './interceptors/timeout.interceptor';
