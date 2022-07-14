@@ -9,8 +9,11 @@ export class Coffee extends Document {
   @Prop()
   brand: string;
 
+  @Prop({ default: 0 })
+  recommendations: number;
+
   @Prop([String])
   flavors: string[];
 }
 
-export const coffeeSchema = SchemaFactory.createForClass(Coffee);
+export const CoffeeSchema = SchemaFactory.createForClass(Coffee);
